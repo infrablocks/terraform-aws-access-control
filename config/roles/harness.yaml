@@ -14,10 +14,28 @@ vars:
       include_login_profile: "yes"
       include_access_key: "yes"
     - name: "test2@example.com"
-      password_length: 32
+      password_length: 48
 
       public_gpg_key_path: "%{hiera('public_gpg_key_path')}"
 
       enforce_mfa: "yes"
       include_login_profile: "yes"
       include_access_key: "yes"
+    - name: "test3@example.com"
+      password_length: 64
+
+      public_gpg_key_path: "%{hiera('public_gpg_key_path')}"
+
+      enforce_mfa: "yes"
+      include_login_profile: "yes"
+      include_access_key: "yes"
+
+  groups:
+    - name: "group1"
+      users:
+        - "test1@example.com"
+        - "test2@example.com"
+    - name: "group2"
+      users:
+        - "test2@example.com"
+        - "test3@example.com"

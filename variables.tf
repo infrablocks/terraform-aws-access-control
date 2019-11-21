@@ -10,3 +10,10 @@ variable "users" {
     include_access_key = string
   }))
 }
+
+variable "groups" {
+  type = list(object({
+    name = string
+    users = list(string)
+  }))
+}

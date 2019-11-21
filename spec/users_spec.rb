@@ -9,7 +9,7 @@ describe 'users' do
   let(:requested_users) { vars.users }
   let(:output_users) { output_for(:harness, 'users', parse: true) }
 
-  it 'should create all defined users' do
+  it 'creates all defined users' do
     requested_users.each do |requested_user|
       created_user = iam_user(requested_user[:name])
       output_user = output_users
@@ -23,7 +23,7 @@ describe 'users' do
     end
   end
 
-  it 'should output usernames and GPG encrypted login passwords' do
+  it 'outputs usernames and GPG encrypted login passwords' do
     requested_users.each do |requested_user|
       output_user = output_users
           .select { |output_user|
@@ -49,7 +49,7 @@ describe 'users' do
     end
   end
 
-  it 'should output access key IDs and secret access keys' do
+  it 'outputs access key IDs and secret access keys' do
     requested_users.each do |requested_user|
       output_user = output_users
           .select { |output_user|

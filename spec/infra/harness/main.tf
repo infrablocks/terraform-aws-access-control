@@ -24,4 +24,5 @@ module "access_control" {
   source = "../../../../"
 
   users = local.users
+  groups = var.groups
 }
