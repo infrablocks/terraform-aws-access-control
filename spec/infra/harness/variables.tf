@@ -17,5 +17,6 @@ variable "groups" {
   type = list(object({
     name = string
     users = list(string)
+    policies = list(string)
   }))
 }

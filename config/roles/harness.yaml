@@ -35,7 +35,12 @@ vars:
       users:
         - "test1@example.com"
         - "test2@example.com"
+      policies:
+        - "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        - "arn:aws:iam::aws:policy/job-function/Billing"
     - name: "group2"
       users:
         - "test2@example.com"
         - "test3@example.com"
+      policies:
+        - "arn:aws:iam::aws:policy/job-function/Billing"

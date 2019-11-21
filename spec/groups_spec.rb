@@ -22,16 +22,23 @@ describe 'user' do
     requested_groups.each do |requested_group|
       created_group = iam_group(requested_group[:name])
 
-      expect(created_group.users.count).to(eq(requested_group[:users].count))
+      expect(created_group.users.count)
+          .to(eq(requested_group[:users].count))
       requested_group[:users].each do |requested_user|
         expect(created_group).to(have_iam_user(requested_user))
       end
     end
   end
 
-  # it 'has specified group policies' do
-  #   group_policies.each do |group_policy|
-  #     expect(subject).to(have_iam_policy(group_policy))
-  #   end
-  # end
+  it 'adds all required policies to each group' do
+    requested_groups.each do |requested_group|
+      created_group = iam_group(requested_group[:name])
+
+      expect(created_group.attached_policies.count)
+          .to(eq(requested_group[:policies].count))
+      requested_group[:policies].each do |group_policy|
+        expect(created_group).to(have_iam_policy(group_policy))
+      end
+    end
+  end
 end
