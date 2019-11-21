@@ -11,3 +11,4 @@ gem 'awspec', '~> 1.18'
 gem 'git', '~> 1.5'
 gem 'semantic', '~> 1.6'
 gem "rubyzip", ">= 1.3.0"
+gem 'iostreams', '~> 0.20.3'
