@@ -18,11 +18,25 @@ locals {
         include_access_key = user.include_access_key
       }
   ]
+
+  groups = [
+    for group in var.groups :
+      {
+        name = group.name
+        users = group.users
+        policies = group.policies
+        assumable_roles = list(
+          data.terraform_remote_state.prerequisites.outputs.test_role_1_arn,
+          data.terraform_remote_state.prerequisites.outputs.test_role_2_arn,
+          data.terraform_remote_state.prerequisites.outputs.test_role_3_arn,
+        )
+      }
+  ]
 }
 
 module "access_control" {
   source = "../../../../"
 
   users = local.users
-  groups = var.groups
+  groups = local.groups
 }

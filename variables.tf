@@ -16,5 +16,6 @@ variable "groups" {
     name = string
     users = list(string)
     policies = list(string)
+    assumable_roles = list(string)
   }))
 }
