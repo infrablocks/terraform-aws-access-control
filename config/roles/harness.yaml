@@ -3,3 +3,21 @@ source_directory: "spec/infra/harness"
 state_file: "%{hiera('project_directory')}/state/harness.tfstate"
 vars:
   region: "%{hiera('region')}"
+
+  users:
+    - name: "test1@example.com"
+      password_length: 32
+
+      public_gpg_key_path: "%{hiera('public_gpg_key_path')}"
+
+      enforce_mfa: "yes"
+      include_login_profile: "yes"
+      include_access_key: "yes"
+    - name: "test2@example.com"
+      password_length: 32
+
+      public_gpg_key_path: "%{hiera('public_gpg_key_path')}"
+
+      enforce_mfa: "yes"
+      include_login_profile: "yes"
+      include_access_key: "yes"

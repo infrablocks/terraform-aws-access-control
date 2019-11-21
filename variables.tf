@@ -1,11 +1,9 @@
-variable "region" {}
-
 variable "users" {
   type = list(object({
     name = string,
     password_length = number,
 
-    public_gpg_key_path = string,
+    public_gpg_key = string,
 
     enforce_mfa = string,
     include_login_profile = string,
