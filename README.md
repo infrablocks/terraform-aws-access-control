@@ -1,15 +1,21 @@
-Terraform AWS Account Defaults
-==============================
+Terraform AWS Access Control
+============================
 
 [![CircleCI](https://circleci.com/gh/infrablocks/terraform-aws-account-defaults.svg?style=svg)](https://circleci.com/gh/infrablocks/terraform-aws-account-defaults)
 
-A Terraform module for configuring account defaults.
+A Terraform module for configuring AWS account access control.
 
-The account defaults deployment has no requirements.
+The access control deployment has no requirements.
  
-The account defaults deployment consists of:
-* An account wide password policy
-* An account alias
+The access control deployment consists of:
+* A set of users, each having
+  * a login profile (optional)
+  * an access key (optional)
+  * MFA enforced (optional)
+* A set of group, each having
+  * a set of users, defined above or otherwise
+  * a set of attached policies
+  * a set of assumable roles
 
 Usage
 -----
@@ -18,9 +24,9 @@ To use the module, include something like the following in your terraform
 configuration:
 
 ```hcl-terraform
-module "account_defaults" {
-  source = "infrablocks/account-defaults/aws"
-  version = "0.1.1"
+module "access_control" {
+  source = "infrablocks/access-control/aws"
+  version = "0.0.1"
   
 }
 ```
@@ -198,7 +204,7 @@ Contributing
 ------------
 
 Bug reports and pull requests are welcome on GitHub at 
-https://github.com/infrablocks/terraform-aws-admin. 
+https://github.com/infrablocks/terraform-aws-access-control. 
 This project is intended to be a safe, welcoming space for collaboration, and 
 contributors are expected to adhere to 
 the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
