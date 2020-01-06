@@ -8,8 +8,13 @@ describe 'policies' do
 
   let(:account_id) { account.account }
 
+  let(:requested_enabled_users) {
+    requested_users
+        .filter { |requested_user| requested_user[:enabled] == 'yes' }
+  }
+
   it 'allows IAM read only access' do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       created_user = iam_user(requested_user[:name])
 
       expect(created_user).to(have_iam_policy('IAMReadOnlyAccess'))
@@ -17,7 +22,7 @@ describe 'policies' do
   end
 
   it 'allows managing service specific credentials' do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       created_user = iam_user(requested_user[:name])
 
       expect(created_user).to(have_iam_policy('IAMSelfManageServiceSpecificCredentials'))
@@ -25,7 +30,7 @@ describe 'policies' do
   end
 
   it 'allows managing user SSH keys' do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       created_user = iam_user(requested_user[:name])
 
       expect(created_user).to(have_iam_policy('IAMUserSSHKeys'))
@@ -33,7 +38,7 @@ describe 'policies' do
   end
 
   it("allows managing MFA device without MFA in context") do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       user_name = requested_user[:name]
       created_user = iam_user(user_name)
 
@@ -50,7 +55,7 @@ describe 'policies' do
   end
 
   it("allows managing user profile without MFA in context") do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       user_name = requested_user[:name]
       created_user = iam_user(user_name)
 
@@ -61,7 +66,7 @@ describe 'policies' do
   end
 
   it('requires MFA in context to manage access keys and signing certs') do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       user_name = requested_user[:name]
       created_user = iam_user(user_name)
       mfa_context = {
@@ -87,7 +92,7 @@ describe 'policies' do
   end
 
   it('allows changing password without MFA in context') do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       user_name = requested_user[:name]
       created_user = iam_user(user_name)
 
@@ -100,7 +105,7 @@ describe 'policies' do
   end
 
   it('allows getting account summary without MFA in context') do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       user_name = requested_user[:name]
       created_user = iam_user(user_name)
 
@@ -109,7 +114,7 @@ describe 'policies' do
   end
 
   it('allows users to be listed without MFA in context') do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       user_name = requested_user[:name]
       created_user = iam_user(user_name)
 
@@ -118,7 +123,7 @@ describe 'policies' do
   end
 
   it('allows account aliases to be listed without MFA in context') do
-    requested_users.each do |requested_user|
+    requested_enabled_users.each do |requested_user|
       user_name = requested_user[:name]
       created_user = iam_user(user_name)
 

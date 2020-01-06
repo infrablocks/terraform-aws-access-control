@@ -9,7 +9,9 @@ variable "users" {
 
     enforce_mfa = string,
     include_login_profile = string,
-    include_access_key = string
+    include_access_key = string,
+
+    enabled = string
   }))
 }
 

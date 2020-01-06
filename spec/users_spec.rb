@@ -9,7 +9,7 @@ describe 'users' do
   let(:requested_users) { vars.users }
   let(:output_users) { output_for(:harness, 'users', parse: true) }
 
-  it 'creates all defined users' do
+  it 'creates only enabled users' do
     requested_users.each do |requested_user|
       created_user = iam_user(requested_user[:name])
       output_user = output_users
@@ -18,13 +18,19 @@ describe 'users' do
           }
           .first
 
-      expect(created_user).to(exist)
-      expect(created_user.arn).to(eq(output_user[:arn]))
+      if requested_user[:enabled] == 'yes'
+        expect(created_user).to(exist)
+        expect(created_user.arn).to(eq(output_user[:arn]))
+      else
+        expect(created_user).not_to(exist)
+      end
     end
   end
 
   it 'outputs usernames and GPG encrypted login passwords' do
-    requested_users.each do |requested_user|
+    requested_users
+        .filter { |requested_user| requested_user[:enabled] == 'yes' }
+        .each do |requested_user|
       output_user = output_users
           .select { |output_user|
             output_user[:name] == requested_user[:name]
@@ -50,7 +56,9 @@ describe 'users' do
   end
 
   it 'outputs access key IDs and secret access keys' do
-    requested_users.each do |requested_user|
+    requested_users
+        .filter { |requested_user| requested_user[:enabled] == 'yes' }
+        .each do |requested_user|
       output_user = output_users
           .select { |output_user|
             output_user[:name] == requested_user[:name]

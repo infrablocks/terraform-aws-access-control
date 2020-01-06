@@ -13,6 +13,9 @@ vars:
       enforce_mfa: "yes"
       include_login_profile: "yes"
       include_access_key: "yes"
+
+      enabled: "yes"
+
     - name: "test2@example.com"
       password_length: 48
 
@@ -21,6 +24,9 @@ vars:
       enforce_mfa: "yes"
       include_login_profile: "yes"
       include_access_key: "yes"
+
+      enabled: "yes"
+
     - name: "test3@example.com"
       password_length: 64
 
@@ -29,6 +35,19 @@ vars:
       enforce_mfa: "yes"
       include_login_profile: "yes"
       include_access_key: "yes"
+
+      enabled: "no"
+
+    - name: "test4@example.com"
+      password_length: 64
+
+      public_gpg_key_path: "%{hiera('public_gpg_key_path')}"
+
+      enforce_mfa: "yes"
+      include_login_profile: "yes"
+      include_access_key: "yes"
+
+      enabled: "yes"
 
   groups:
     - name: "group1"
@@ -41,6 +60,6 @@ vars:
     - name: "group2"
       users:
         - "test2@example.com"
-        - "test3@example.com"
+        - "test4@example.com"
       policies:
         - "arn:aws:iam::aws:policy/job-function/Billing"

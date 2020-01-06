@@ -28,6 +28,7 @@ resource "aws_iam_group_membership" "group" {
   name = "${var.groups[count.index].name}-membership"
   group = aws_iam_group.group[count.index].name
   users = var.groups[count.index].users
+  depends_on = [aws_iam_user.user]
 }
 
 resource "aws_iam_group_policy_attachment" "policies" {
