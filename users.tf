@@ -2,36 +2,36 @@
 # terraform doesn't support count or for_each on modules yet, we have to copy
 # the contents here
 locals {
-  enabled_users = [
-    for user in var.users : user if user.enabled == "yes"
-  ]
-  users_needing_login_profile = [
-    for user in var.users : user if user.include_login_profile == "yes" && user.enabled == "yes"
-  ]
-  users_needing_access_key = [
-    for user in var.users : user if user.include_access_key == "yes" && user.enabled == "yes"
-  ]
+  enabled_users = {
+    for user in var.users : user.name => user if user.enabled == "yes"
+  }
+  users_needing_login_profile = {
+    for user in var.users : user.name => user if user.include_login_profile == "yes" && user.enabled == "yes"
+  }
+  users_needing_access_key = {
+    for user in var.users : user.name => user if user.include_access_key == "yes" && user.enabled == "yes"
+  }
 }
 
 resource "aws_iam_user" "user" {
-  count = length(local.enabled_users)
-  name = local.enabled_users[count.index].name
+  for_each = local.enabled_users
+  name = each.key
   force_destroy = true
 }
 
 resource "aws_iam_user_login_profile" "user" {
-  count = length(local.users_needing_login_profile)
+  for_each = local.users_needing_login_profile
 
-  user = aws_iam_user.user[index(local.enabled_users, local.users_needing_login_profile[count.index])].name
-  pgp_key = local.users_needing_login_profile[count.index].public_gpg_key
-  password_length = local.users_needing_login_profile[count.index].password_length
+  user = aws_iam_user.user[each.key].name
+  pgp_key = each.value.public_gpg_key
+  password_length = each.value.password_length
 }
 
 resource "aws_iam_access_key" "user" {
-  count = length(local.users_needing_access_key)
+  for_each = local.users_needing_access_key
 
-  user = aws_iam_user.user[index(local.enabled_users, local.users_needing_access_key[count.index])].name
-  pgp_key = local.users_needing_access_key[count.index].public_gpg_key
+  user = aws_iam_user.user[each.key].name
+  pgp_key = each.value.public_gpg_key
 }
 
 locals {
@@ -40,10 +40,10 @@ locals {
       {
         name = user.name,
         enabled = user.enabled,
-        arn = contains(local.enabled_users, user) ? aws_iam_user.user[index(local.enabled_users, user)].arn : "",
-        password = contains(local.users_needing_login_profile, user) ? aws_iam_user_login_profile.user[index(local.users_needing_login_profile, user)].encrypted_password : ""
-        access_key_id = contains(local.users_needing_access_key, user) ? aws_iam_access_key.user[index(local.users_needing_access_key, user)].id : ""
-        secret_access_key = contains(local.users_needing_access_key, user) ? aws_iam_access_key.user[index(local.users_needing_access_key, user)].encrypted_secret : ""
+        arn = contains(keys(local.enabled_users), user.name) ? aws_iam_user.user[user.name].arn : "",
+        password = contains(keys(local.users_needing_login_profile), user.name) ? aws_iam_user_login_profile.user[user.name].encrypted_password : ""
+        access_key_id = contains(keys(local.users_needing_access_key), user.name) ? aws_iam_access_key.user[user.name].id : ""
+        secret_access_key = contains(keys(local.users_needing_access_key), user.name) ? aws_iam_access_key.user[user.name].encrypted_secret : ""
       }
   ]
 }
