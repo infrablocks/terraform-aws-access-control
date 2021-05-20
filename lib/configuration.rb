@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 require 'ostruct'
 require 'confidante'
@@ -7,13 +9,23 @@ require_relative 'public_address'
 
 class Configuration
   def initialize
+    public_gpg_key_path =
+      "#{project_directory}/config/secrets/user/gpg.public"
+    private_gpg_key_path =
+      "#{project_directory}/config/secrets/user/gpg.private"
+    gpg_key_passphrase_path =
+      "#{project_directory}/config/secrets/user/gpg.passphrase"
+
     @random_deployment_identifier = SecureRandom.hex[0, 8].to_s
-    @default_public_gpg_key_path =
-        "#{project_directory}/config/secrets/gpg/user.gpg.public"
-    @default_private_gpg_key_path =
-        "#{project_directory}/config/secrets/gpg/user.gpg.private"
+    @default_public_gpg_key_path = public_gpg_key_path
+    @default_private_gpg_key_path = private_gpg_key_path
     @default_gpg_key_passphrase =
-        File.read("#{project_directory}/config/secrets/gpg/user.passphrase")
+      begin
+        File.read(gpg_key_passphrase_path)
+      rescue StandardError
+        nil
+      end
+
     @delegate = Confidante.configuration
   end
 
