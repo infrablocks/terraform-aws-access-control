@@ -26,11 +26,11 @@ locals {
         name = group.name
         users = group.users
         policies = group.policies
-        assumable_roles = list(
+        assumable_roles = [
           data.terraform_remote_state.prerequisites.outputs.test_role_1_arn,
           data.terraform_remote_state.prerequisites.outputs.test_role_2_arn,
           data.terraform_remote_state.prerequisites.outputs.test_role_3_arn,
-        )
+        ]
       }
   ]
 }
