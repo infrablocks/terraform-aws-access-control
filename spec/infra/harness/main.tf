@@ -36,7 +36,8 @@ locals {
 }
 
 module "access_control" {
-  source = "../../../../"
+  # This makes absolutely no sense. I think there's a bug in terraform.
+  source = "./../../../../../../../"
 
   users = local.users
   groups = local.groups

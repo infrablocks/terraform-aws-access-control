@@ -7,7 +7,7 @@ require_relative 'iostreams/pgp'
 
 describe 'users' do
   let(:requested_users) { vars.users }
-  let(:output_users) { output_for(:harness, 'users', parse: true) }
+  let(:output_users) { output_for(:harness, 'users') }
 
   it 'creates only enabled users' do
     requested_users.each do |requested_user|

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'user' do
   let(:requested_groups) { vars.groups }
-  let(:output_groups) { output_for(:harness, 'groups', parse: true) }
+  let(:output_groups) { output_for(:harness, 'groups') }
 
   let(:test_role_1_arn) { output_for(:prerequisites, 'test_role_1_arn') }
   let(:test_role_2_arn) { output_for(:prerequisites, 'test_role_2_arn') }
