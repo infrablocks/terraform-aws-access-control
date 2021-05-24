@@ -14,7 +14,8 @@ module TerraformModule
     def output_for(role, name)
       params = {
         name: name,
-        state: configuration.for(role).state_file
+        state: configuration.for(role).state_file,
+        json: true
       }
       value = RubyTerraform.output(params)
       JSON.parse(value, symbolize_names: true)
