@@ -20,16 +20,19 @@ The access control deployment consists of:
 Usage
 -----
 
-To use the module, include something like the following in your terraform
+To use the module, include something like the following in your Terraform
 configuration:
 
 ```hcl-terraform
 module "access_control" {
   source = "infrablocks/access-control/aws"
   version = "0.0.1"
-  
 }
 ```
+
+See the 
+[Terraform registry entry](https://registry.terraform.io/modules/infrablocks/access-control/aws/latest) 
+for more details.
 
 ### Inputs
 
@@ -40,6 +43,11 @@ module "access_control" {
 
 | Name | Description |
 |------|-------------|
+
+### Compatibility
+
+This module is compatible with Terraform versions greater than or equal to 
+Terraform 0.14.
 
 Development
 -----------
