@@ -77,6 +77,10 @@ class Configuration
     @delegate.work_directory
   end
 
+  def region
+    @delegate.region
+  end
+
   def public_address
     PublicAddress.as_ip_address
   end
