@@ -17,7 +17,7 @@ require_relative 'lib/version'
 configuration = Configuration.new
 
 def repo
-  Git.open('.')
+  Git.open(Pathname.new('.'))
 end
 
 def latest_tag

@@ -78,7 +78,9 @@ class Configuration
   end
 
   def region
-    @delegate.region
+    @delegate
+      .for_scope(project_directory: project_directory)
+      .region
   end
 
   def public_address
