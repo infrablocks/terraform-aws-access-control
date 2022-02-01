@@ -72,7 +72,7 @@ Installing the required tools is best managed by [homebrew](http://brew.sh).
 To install homebrew:
 
 ```
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/main/install)"
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
 Then, to install the required tools:
