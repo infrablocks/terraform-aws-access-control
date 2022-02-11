@@ -6,7 +6,7 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      - dependency-name: "*"
+      - dependency-name: "hashicorp/aws"
         update-types:
           - "version-update:semver-major"
 
