@@ -11,6 +11,7 @@ gem 'confidante'
 gem 'rspec'
 gem 'awspec'
 gem 'git'
+gem 'nokogiri'
 gem 'semantic'
 gem "rubyzip"
 gem 'iostreams'
