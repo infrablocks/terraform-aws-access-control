@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  queue: eddiewebb/queue@volatile
 jobs:
   test:
     working_directory: ~/terraform-aws-account-defaults
@@ -7,6 +9,7 @@ jobs:
     steps:
       - checkout
       - run: ./scripts/ci/common/install-git-crypt.sh
+      - queue/until_front_of_line
       - run: ./scripts/ci/steps/test.sh
   prerelease:
     working_directory: ~/terraform-aws-account-defaults
@@ -34,6 +37,7 @@ jobs:
       - run: ./scripts/ci/common/install-gpg-key.sh
       - run: ./scripts/ci/common/configure-git.sh
       - run: ./scripts/ci/steps/merge-pull-request.sh
+
 workflows:
   version: 2
   pipeline:

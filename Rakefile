@@ -100,8 +100,11 @@ RakeCircleCI.define_project_tasks(
   t.api_token = circle_ci_config['circle_ci_api_token']
   t.environment_variables = {
     ENCRYPTION_PASSPHRASE:
-        File.read('config/secrets/ci/encryption.passphrase')
-            .chomp
+      File.read('config/secrets/ci/encryption.passphrase')
+          .chomp,
+    CIRCLECI_API_KEY:
+      YAML.load_file(
+        'config/secrets/circle_ci/config.yaml')['circle_ci_api_token']
   }
   t.checkout_keys = []
   t.ssh_keys = [
