@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  queue: eddiewebb/queue@volatile
+  queue: eddiewebb/queue@1.6.4
 jobs:
   test:
     working_directory: ~/terraform-aws-account-defaults
