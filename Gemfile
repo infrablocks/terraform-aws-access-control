@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'rake_dependencies'
 gem 'rake_terraform'
 gem 'rake_circle_ci'
 gem 'rake_github'
@@ -13,5 +12,5 @@ gem 'awspec'
 gem 'git'
 gem 'nokogiri'
 gem 'semantic'
-gem "rubyzip"
+gem 'rubyzip'
 gem 'iostreams'

@@ -30,7 +30,7 @@ task default: 'test:integration'
 
 RakeTerraform.define_installation_tasks(
   path: File.join(Dir.pwd, 'vendor', 'terraform'),
-  version: '1.1.7')
+  version: '1.0.11')
 
 namespace :encryption do
   namespace :passphrase do
