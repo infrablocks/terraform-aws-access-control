@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 require 'git'
-require 'yaml'
-require 'semantic'
-require 'rake_terraform'
 require 'rake_circle_ci'
 require 'rake_github'
-require 'rake_ssh'
 require 'rake_gpg'
-require 'securerandom'
+require 'rake_ssh'
+require 'rake_terraform'
 require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
+require 'securerandom'
+require 'semantic'
+require 'yaml'
 
 require_relative 'lib/configuration'
 require_relative 'lib/version'
@@ -26,18 +27,22 @@ def latest_tag
   end.max
 end
 
-task default: 'test:integration'
+task default: %i[
+  test:code:fix
+  test:integration
+]
 
 RakeTerraform.define_installation_tasks(
   path: File.join(Dir.pwd, 'vendor', 'terraform'),
-  version: '1.0.11')
+  version: '1.0.11'
+)
 
 namespace :encryption do
   namespace :passphrase do
+    desc 'Generate encryption passphrase for CI GPG key'
     task :generate do
-      File.open('config/secrets/ci/encryption.passphrase', 'w') do |f|
-        f.write(SecureRandom.base64(36))
-      end
+      File.write('config/secrets/ci/encryption.passphrase',
+                 SecureRandom.base64(36))
     end
   end
 end
@@ -57,7 +62,8 @@ namespace :keys do
         name_prefix: 'gpg',
         owner_name: 'InfraBlocks Maintainers',
         owner_email: 'maintainers@infrablocks.io',
-        owner_comment: 'terraform-aws-access-control CI Key')
+        owner_comment: 'terraform-aws-access-control CI Key'
+      )
     end
 
     task generate: ['gpg:generate']
@@ -65,10 +71,10 @@ namespace :keys do
 
   namespace :user do
     namespace :passphrase do
+      desc 'Generate GPG passphrase'
       task :generate do
-        File.open('config/secrets/user/gpg.passphrase', 'w') do |f|
-          f.write(SecureRandom.base64(36))
-        end
+        File.write('config/secrets/user/gpg.passphrase',
+                   SecureRandom.base64(36))
       end
     end
 
@@ -104,7 +110,8 @@ RakeCircleCI.define_project_tasks(
           .chomp,
     CIRCLECI_API_KEY:
       YAML.load_file(
-        'config/secrets/circle_ci/config.yaml')['circle_ci_api_token']
+        'config/secrets/circle_ci/config.yaml'
+      )['circle_ci_api_token']
   }
   t.checkout_keys = []
   t.ssh_keys = [
@@ -117,12 +124,12 @@ end
 
 RakeGithub.define_repository_tasks(
   namespace: :github,
-  repository: 'infrablocks/terraform-aws-access-control',
+  repository: 'infrablocks/terraform-aws-access-control'
 ) do |t, args|
   github_config =
     YAML.load_file('config/secrets/github/config.yaml')
 
-  t.access_token = github_config["github_personal_access_token"]
+  t.access_token = github_config['github_personal_access_token']
   t.deploy_keys = [
     {
       title: 'CircleCI',
@@ -134,6 +141,7 @@ RakeGithub.define_repository_tasks(
 end
 
 namespace :pipeline do
+  desc 'Prepare CircleCI Pipeline'
   task prepare: %i[
     circle_ci:project:follow
     circle_ci:env_vars:ensure
@@ -143,7 +151,17 @@ namespace :pipeline do
   ]
 end
 
+RuboCop::RakeTask.new
+
 namespace :test do
+  namespace :code do
+    desc 'Run all checks on the test code'
+    task check: [:rubocop]
+
+    desc 'Attempt to automatically fix issues with the test code'
+    task fix: [:'rubocop:auto_correct']
+  end
+
   RSpec::Core::RakeTask.new(integration: ['terraform:ensure']) do
     plugin_cache_directory =
       "#{Paths.project_root_directory}/vendor/terraform/plugins"
@@ -189,6 +207,7 @@ namespace :deployment do
 end
 
 namespace :version do
+  desc 'Bump version for specified type (pre, major, minor, patch)'
   task :bump, [:type] do |_, args|
     next_tag = latest_tag.send("#{args.type}!")
     repo.add_tag(next_tag.to_s)
@@ -196,6 +215,7 @@ namespace :version do
     puts "Bumped version to #{next_tag}."
   end
 
+  desc 'Release gem'
   task :release do
     next_tag = latest_tag.release!
     repo.add_tag(next_tag.to_s)

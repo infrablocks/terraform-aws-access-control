@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bundler/setup'
 require 'ruby_terraform'
 
@@ -12,7 +14,8 @@ RubyTerraform.configure do |c|
   end
 
   c.binary = Paths.from_project_root_directory(
-      'vendor', 'terraform', 'bin', 'terraform')
+    'vendor', 'terraform', 'bin', 'terraform'
+  )
   c.logger = logger
 end
 
@@ -23,17 +26,15 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.include_context :terraform
+  config.include_context 'terraform'
 
   config.before(:suite) do
     TerraformModule.provision_for(:prerequisites)
     TerraformModule.provision_for(:harness)
   end
   config.after(:suite) do
-    begin
-      TerraformModule.destroy_for(:harness)
-    ensure
-      TerraformModule.destroy_for(:prerequisites)
-    end
+    TerraformModule.destroy_for(:harness)
+  ensure
+    TerraformModule.destroy_for(:prerequisites)
   end
 end

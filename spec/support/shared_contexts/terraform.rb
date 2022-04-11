@@ -6,9 +6,11 @@ require 'ostruct'
 
 require_relative '../terraform_module'
 
-shared_context :terraform do
+# rubocop:disable RSpec/ContextWording
+shared_context 'terraform' do
   include Awspec::Helper::Finder
 
+  # rubocop:disable Style/OpenStructUse
   let(:vars) do
     OpenStruct.new(
       TerraformModule.configuration
@@ -16,6 +18,7 @@ shared_context :terraform do
           .vars
     )
   end
+  # rubocop:enable Style/OpenStructUse
 
   def configuration
     TerraformModule.configuration
@@ -32,3 +35,4 @@ shared_context :terraform do
     )
   end
 end
+# rubocop:enable RSpec/ContextWording

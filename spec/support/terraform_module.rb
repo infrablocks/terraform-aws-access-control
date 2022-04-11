@@ -13,7 +13,7 @@ module TerraformModule
 
     def output_for(role, name)
       params = {
-        name: name,
+        name:,
         state: configuration.for(role).state_file,
         json: true
       }
@@ -27,19 +27,9 @@ module TerraformModule
 
     def provision(configuration)
       with_clean_directory(configuration) do
-        puts
-        puts "Provisioning with deployment identifier: #{configuration.deployment_identifier}"
-        puts
-
-        RubyTerraform.apply(
-          chdir: configuration.configuration_directory,
-          state: configuration.state_file,
-          vars: configuration.vars.to_h,
-          input: false,
-          auto_approve: true
-        )
-
-        puts
+        log_action(:provisioning, configuration)
+        invoke_apply(configuration)
+        log_done
       end
     end
 
@@ -48,22 +38,12 @@ module TerraformModule
     end
 
     def destroy(configuration, opts = {})
-      if opts[:force] || !ENV['DEPLOYMENT_IDENTIFIER']
-        with_clean_directory(configuration) do
-          puts
-          puts "Destroying with deployment identifier: #{configuration.deployment_identifier}"
-          puts
+      return unless opts[:force] || !ENV['DEPLOYMENT_IDENTIFIER']
 
-          RubyTerraform.destroy(
-            chdir: configuration.configuration_directory,
-            state: configuration.state_file,
-            vars: configuration.vars.to_h,
-            input: false,
-            auto_approve: true
-          )
-
-          puts
-        end
+      with_clean_directory(configuration) do
+        log_action(:destroying, configuration)
+        invoke_destroy(configuration)
+        log_done
       end
     end
 
@@ -79,6 +59,37 @@ module TerraformModule
         input: false
       )
       yield configuration
+    end
+
+    def invoke_apply(configuration)
+      RubyTerraform.apply(
+        chdir: configuration.configuration_directory,
+        state: configuration.state_file,
+        vars: configuration.vars.to_h,
+        input: false,
+        auto_approve: true
+      )
+    end
+
+    def invoke_destroy(configuration)
+      RubyTerraform.destroy(
+        chdir: configuration.configuration_directory,
+        state: configuration.state_file,
+        vars: configuration.vars.to_h,
+        input: false,
+        auto_approve: true
+      )
+    end
+
+    def log_action(action, configuration)
+      puts
+      puts "#{action.to_s.capitalize} with deployment identifier: "\
+           "#{configuration.deployment_identifier}"
+      puts
+    end
+
+    def log_done
+      puts
     end
   end
 end

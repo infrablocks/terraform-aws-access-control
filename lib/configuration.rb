@@ -9,19 +9,12 @@ require_relative 'public_address'
 
 class Configuration
   def initialize
-    public_gpg_key_path =
-      "#{project_directory}/config/secrets/user/gpg.public"
-    private_gpg_key_path =
-      "#{project_directory}/config/secrets/user/gpg.private"
-    gpg_key_passphrase_path =
-      "#{project_directory}/config/secrets/user/gpg.passphrase"
-
     @random_deployment_identifier = SecureRandom.hex[0, 8].to_s
-    @default_public_gpg_key_path = public_gpg_key_path
-    @default_private_gpg_key_path = private_gpg_key_path
+    @default_public_gpg_key_path = default_public_gpg_key_path
+    @default_private_gpg_key_path = default_private_gpg_key_path
     @default_gpg_key_passphrase =
       begin
-        File.read(gpg_key_passphrase_path)
+        File.read(default_gpg_passphrase_path)
       rescue StandardError
         nil
       end
@@ -34,9 +27,9 @@ class Configuration
   end
 
   def deployment_identifier_for(overrides)
-    OpenStruct.new(overrides).deployment_identifier ||
-        ENV['DEPLOYMENT_IDENTIFIER'] ||
-        @random_deployment_identifier
+    (overrides && overrides[:deployment_identifier]) ||
+      ENV['DEPLOYMENT_IDENTIFIER'] ||
+      @random_deployment_identifier
   end
 
   def public_gpg_key_path
@@ -44,9 +37,9 @@ class Configuration
   end
 
   def public_gpg_key_path_for(overrides)
-    OpenStruct.new(overrides).public_gpg_key_path ||
-        ENV['PUBLIC_GPG_KEY_PATH'] ||
-        @default_public_gpg_key_path
+    (overrides && overrides[:public_gpg_key_path]) ||
+      ENV['PUBLIC_GPG_KEY_PATH'] ||
+      @default_public_gpg_key_path
   end
 
   def private_gpg_key_path
@@ -54,9 +47,9 @@ class Configuration
   end
 
   def private_gpg_key_path_for(overrides)
-    OpenStruct.new(overrides).private_gpg_key_path ||
-        ENV['PRIVATE_GPG_KEY_PATH'] ||
-        @default_private_gpg_key_path
+    (overrides && overrides[:private_gpg_key_path]) ||
+      ENV['PRIVATE_GPG_KEY_PATH'] ||
+      @default_private_gpg_key_path
   end
 
   def gpg_key_passphrase
@@ -64,9 +57,9 @@ class Configuration
   end
 
   def gpg_key_passphrase_for(overrides)
-    OpenStruct.new(overrides).gpg_key_passphrase ||
-        ENV['GPG_KEY_PASSPHRASE'] ||
-        @default_gpg_key_passphrase
+    (overrides && overrides[:gpg_key_passphrase]) ||
+      ENV['GPG_KEY_PASSPHRASE'] ||
+      @default_gpg_key_passphrase
   end
 
   def project_directory
@@ -79,7 +72,7 @@ class Configuration
 
   def region
     @delegate
-      .for_scope(project_directory: project_directory)
+      .for_scope(project_directory:)
       .region
   end
 
@@ -89,18 +82,39 @@ class Configuration
 
   def for(role, overrides = nil)
     @delegate
-        .for_scope(
-            role: role,
-            project_directory: project_directory
-        )
-        .for_overrides(
-            overrides.to_h.merge({
-                public_address: public_address,
-                project_directory: project_directory,
-                deployment_identifier: deployment_identifier_for(overrides),
-                public_gpg_key_path: public_gpg_key_path_for(overrides),
-                private_gpg_key_path: private_gpg_key_path_for(overrides),
-                gpg_key_passphrase: gpg_key_passphrase_for(overrides)
-            }))
+      .for_scope(default_scope(role))
+      .for_overrides(overrides.to_h.merge(default_overrides(overrides)))
+  end
+
+  private
+
+  def default_scope(role)
+    {
+      role:,
+      project_directory:
+    }
+  end
+
+  def default_overrides(overrides)
+    {
+      public_address:,
+      project_directory:,
+      deployment_identifier: deployment_identifier_for(overrides),
+      public_gpg_key_path: public_gpg_key_path_for(overrides),
+      private_gpg_key_path: private_gpg_key_path_for(overrides),
+      gpg_key_passphrase: gpg_key_passphrase_for(overrides)
+    }
+  end
+
+  def default_gpg_passphrase_path
+    "#{project_directory}/config/secrets/user/gpg.passphrase"
+  end
+
+  def default_private_gpg_key_path
+    "#{project_directory}/config/secrets/user/gpg.private"
+  end
+
+  def default_public_gpg_key_path
+    "#{project_directory}/config/secrets/user/gpg.public"
   end
 end
