@@ -5,8 +5,6 @@ variable "users" {
     name = string,
     password_length = number,
 
-    public_gpg_key_path = string,
-
     enforce_mfa = string,
     include_login_profile = string,
     include_access_key = string,
@@ -22,3 +20,5 @@ variable "groups" {
     policies = list(string)
   }))
 }
+
+variable "user_public_gpg_key_path" {}

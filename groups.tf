@@ -30,15 +30,21 @@ resource "aws_iam_group" "group" {
 resource "aws_iam_group_membership" "group" {
   for_each = local.groups
   name = "${each.key}-membership"
-  group = aws_iam_group.group[each.key].name
+  group = each.key
   users = each.value.users
-  depends_on = [aws_iam_user.user]
+  depends_on = [
+    aws_iam_user.user,
+    aws_iam_group.group
+  ]
 }
 
 resource "aws_iam_group_policy_attachment" "policies" {
   for_each = local.group_policies
-  group = aws_iam_group.group[each.value.group.name].name
+  group = each.value.group.name
   policy_arn = each.value.policy_arn
+  depends_on = [
+    aws_iam_group.group
+  ]
 }
 
 data "aws_iam_policy_document" "assumable_roles_policy" {

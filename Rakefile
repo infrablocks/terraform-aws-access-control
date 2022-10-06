@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'confidante'
 require 'git'
 require 'rake_circle_ci'
 require 'rake_github'
@@ -12,10 +13,10 @@ require 'securerandom'
 require 'semantic'
 require 'yaml'
 
-require_relative 'lib/configuration'
+require_relative 'lib/paths'
 require_relative 'lib/version'
 
-configuration = Configuration.new
+configuration = Confidante.configuration
 
 def repo
   Git.open(Pathname.new('.'))
@@ -29,20 +30,30 @@ end
 
 task default: %i[
   test:code:fix
+  test:unit
   test:integration
 ]
 
 RakeTerraform.define_installation_tasks(
   path: File.join(Dir.pwd, 'vendor', 'terraform'),
-  version: '1.0.11'
+  version: '1.3.1'
 )
 
 namespace :encryption do
+  namespace :directory do
+    desc 'Ensure CI secrets directory exists'
+    task :ensure do
+      FileUtils.mkdir_p('config/secrets/ci')
+    end
+  end
+
   namespace :passphrase do
     desc 'Generate encryption passphrase for CI GPG key'
-    task :generate do
-      File.write('config/secrets/ci/encryption.passphrase',
-                 SecureRandom.base64(36))
+    task generate: ['directory:ensure'] do
+      File.write(
+        'config/secrets/ci/encryption.passphrase',
+        SecureRandom.base64(36)
+      )
     end
   end
 end
@@ -96,6 +107,27 @@ namespace :keys do
   end
 end
 
+namespace :secrets do
+  namespace :directory do
+    desc 'Ensure secrets directory exists and is set up correctly'
+    task :ensure do
+      FileUtils.mkdir_p('config/secrets')
+      unless File.exist?('config/secrets/.unlocked')
+        File.write('config/secrets/.unlocked', 'true')
+      end
+    end
+  end
+
+  desc 'Regenerate all secrets'
+  task regenerate: %w[
+    directory:ensure
+    encryption:passphrase:generate
+    keys:deploy:generate
+    keys:secrets:generate
+    keys:user:generate
+  ]
+end
+
 RakeCircleCI.define_project_tasks(
   namespace: :circle_ci,
   project_slug: 'github/infrablocks/terraform-aws-access-control'
@@ -143,7 +175,6 @@ end
 namespace :pipeline do
   desc 'Prepare CircleCI Pipeline'
   task prepare: %i[
-    circle_ci:project:follow
     circle_ci:env_vars:ensure
     circle_ci:checkout_keys:ensure
     circle_ci:ssh_keys:ensure
@@ -159,16 +190,32 @@ namespace :test do
     task check: [:rubocop]
 
     desc 'Attempt to automatically fix issues with the test code'
-    task fix: [:'rubocop:autocorrect']
+    task fix: [:'rubocop:autocorrect_all']
   end
 
-  RSpec::Core::RakeTask.new(integration: ['terraform:ensure']) do
+  desc 'Run module unit tests'
+  RSpec::Core::RakeTask.new(unit: ['terraform:ensure']) do |t|
+    t.pattern = 'spec/unit/**{,/*/**}/*_spec.rb'
+    t.rspec_opts = '-I spec/unit'
+
     plugin_cache_directory =
       "#{Paths.project_root_directory}/vendor/terraform/plugins"
 
     mkdir_p(plugin_cache_directory)
 
-    ENV['TF_PLUGIN_CACHE_DIR'] = plugin_cache_directory
+    ENV['AWS_REGION'] = configuration.region
+  end
+
+  desc 'Run module integration tests'
+  RSpec::Core::RakeTask.new(integration: ['terraform:ensure']) do |t|
+    t.pattern = 'spec/integration/**{,/*/**}/*_spec.rb'
+    t.rspec_opts = '-I spec/integration'
+
+    plugin_cache_directory =
+      "#{Paths.project_root_directory}/vendor/terraform/plugins"
+
+    mkdir_p(plugin_cache_directory)
+
     ENV['AWS_REGION'] = configuration.region
   end
 end
@@ -177,28 +224,33 @@ namespace :deployment do
   namespace :prerequisites do
     RakeTerraform.define_command_tasks(
       configuration_name: 'prerequisites',
-      argument_names: [:deployment_identifier]
+      argument_names: [:seed]
     ) do |t, args|
       deployment_configuration =
-        configuration.for(:prerequisites, args)
+        configuration
+        .for_scope(role: :prerequisites)
+        .for_overrides(args.to_h)
 
-      t.source_directory = deployment_configuration.source_directory
-      t.work_directory = deployment_configuration.work_directory
+      t.source_directory = 'spec/unit/infra/prerequisites'
+      t.work_directory = 'build/infra'
 
       t.state_file = deployment_configuration.state_file
       t.vars = deployment_configuration.vars
     end
   end
 
-  namespace :harness do
+  namespace :root do
     RakeTerraform.define_command_tasks(
-      configuration_name: 'harness',
-      argument_names: [:deployment_identifier]
+      configuration_name: 'root',
+      argument_names: [:seed]
     ) do |t, args|
-      deployment_configuration = configuration.for(:harness, args)
+      deployment_configuration =
+        configuration
+        .for_scope(role: :root)
+        .for_overrides(args.to_h)
 
-      t.source_directory = deployment_configuration.source_directory
-      t.work_directory = deployment_configuration.work_directory
+      t.source_directory = 'spec/unit/infra/root'
+      t.work_directory = 'build/infra'
 
       t.state_file = deployment_configuration.state_file
       t.vars = deployment_configuration.vars
@@ -215,7 +267,7 @@ namespace :version do
     puts "Bumped version to #{next_tag}."
   end
 
-  desc 'Release gem'
+  desc 'Release module'
   task :release do
     next_tag = latest_tag.release!
     repo.add_tag(next_tag.to_s)

@@ -5,7 +5,7 @@ require 'json'
 require 'uri'
 require 'iostreams'
 
-require_relative 'iostreams/pgp'
+require_relative 'support/iostreams/pgp'
 
 describe 'users' do
   let(:requested_users) { vars.users }
