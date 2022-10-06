@@ -9,7 +9,7 @@ Layout/LineLength:
   Max: 80
 
 Metrics/BlockLength:
-  IgnoredMethods:
+  AllowedMethods:
     - describe
     - context
     - shared_examples
@@ -24,6 +24,12 @@ RSpec/ExampleLength:
   Max: 40
 
 RSpec/DescribeClass:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/BeforeAfterAll:
   Enabled: false
 
 RSpec/MultipleMemoizedHelpers:

@@ -1,0 +1,9 @@
+---
+configuration_directory: "%{cwd}/examples/basic"
+state_file: "%{cwd}/state/basic.tfstate"
+vars:
+  region: "%{hiera('region')}"
+
+  deployment_identifier: "%{hiera('deployment_identifier')}"
+
+  public_gpg_key_path: "%{hiera('user_public_gpg_key_path')}"

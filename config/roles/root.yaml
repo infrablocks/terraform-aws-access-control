@@ -1,0 +1,59 @@
+---
+configuration_directory: "%{cwd}/spec/unit/infra/root"
+state_file: "%{cwd}/state/root.tfstate"
+vars:
+  region: "%{hiera('region')}"
+
+  user_public_gpg_key_path: "%{hiera('user_public_gpg_key_path')}"
+
+#  users:
+#    - name: "test1@example.com"
+#      password_length: 32
+#
+#      enforce_mfa: "yes"
+#      include_login_profile: "yes"
+#      include_access_key: "yes"
+#
+#      enabled: "yes"
+#
+#    - name: "test2@example.com"
+#      password_length: 48
+#
+#      enforce_mfa: "yes"
+#      include_login_profile: "yes"
+#      include_access_key: "yes"
+#
+#      enabled: "yes"
+#
+#    - name: "test3@example.com"
+#      password_length: 64
+#
+#      enforce_mfa: "yes"
+#      include_login_profile: "yes"
+#      include_access_key: "yes"
+#
+#      enabled: "no"
+#
+#    - name: "test4@example.com"
+#      password_length: 64
+#
+#      enforce_mfa: "yes"
+#      include_login_profile: "yes"
+#      include_access_key: "yes"
+#
+#      enabled: "yes"
+#
+#  groups:
+#    - name: "group1"
+#      users:
+#        - "test1@example.com"
+#        - "test2@example.com"
+#      policies:
+#        - "arn:aws:iam::aws:policy/ReadOnlyAccess"
+#        - "arn:aws:iam::aws:policy/job-function/Billing"
+#    - name: "group2"
+#      users:
+#        - "test2@example.com"
+#        - "test4@example.com"
+#      policies:
+#        - "arn:aws:iam::aws:policy/job-function/Billing"

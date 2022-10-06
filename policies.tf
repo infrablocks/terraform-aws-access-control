@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "change_password" {
       "iam:ChangePassword"
     ]
     resources = [
-      aws_iam_user.user[each.key].arn
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${each.key}"
     ]
     sid = "AllowUserToChangeTheirPassword"
   }
@@ -66,8 +66,8 @@ data "aws_iam_policy_document" "manage_mfa" {
       "iam:*MFADevice"
     ]
     resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${aws_iam_user.user[each.key].name}",
-      aws_iam_user.user[each.key].arn,
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${each.key}",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${each.key}"
     ]
     sid = "AllowUserToManageTheirMFA"
   }
@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "manage_profile" {
       "iam:*SigningCertificate*"
     ]
     resources = [
-      aws_iam_user.user[each.key].arn
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${each.key}"
     ]
     sid = "AllowUserToManageOwnProfile"
   }
@@ -144,8 +144,8 @@ data "aws_iam_policy_document" "enforce_mfa" {
       "iam:ChangePassword"
     ]
     not_resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${aws_iam_user.user[each.key].name}",
-      aws_iam_user.user[each.key].arn
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${each.key}",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${each.key}"
     ]
     sid = "DenyIAMAccessToOtherUsersUnlessMFAd"
   }
