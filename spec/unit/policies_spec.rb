@@ -124,12 +124,14 @@ describe 'policies' do
                   a_policy_with_statement(
                     Effect: 'Allow',
                     Action: 'iam:ChangePassword',
-                    Resource: "arn:aws:iam::#{@account_id}:user/test@example.com"
+                    Resource:
+                      "arn:aws:iam::#{@account_id}:user/test@example.com"
                   )
                 ))
       end
 
-      it 'creates a user policy allowing the user to manage their own profile' do
+      it 'creates a user policy allowing the user to manage their own ' \
+         'profile' do
         expect(@plan)
           .to(include_resource_creation(
             type: 'aws_iam_user_policy'
@@ -145,7 +147,8 @@ describe 'policies' do
                       iam:*LoginProfile
                       iam:*SigningCertificate*
                     ],
-                    Resource: "arn:aws:iam::#{@account_id}:user/test@example.com"
+                    Resource:
+                      "arn:aws:iam::#{@account_id}:user/test@example.com"
                   )
                 ))
       end
@@ -232,7 +235,8 @@ describe 'policies' do
                   a_policy_with_statement(
                     Effect: 'Allow',
                     Action: 'iam:ChangePassword',
-                    Resource: "arn:aws:iam::#{@account_id}:user/test@example.com"
+                    Resource:
+                      "arn:aws:iam::#{@account_id}:user/test@example.com"
                   )
                 ))
       end
@@ -254,7 +258,8 @@ describe 'policies' do
                       iam:*LoginProfile
                       iam:*SigningCertificate*
                     ],
-                    Resource: "arn:aws:iam::#{@account_id}:user/test@example.com"
+                    Resource:
+                      "arn:aws:iam::#{@account_id}:user/test@example.com"
                   )
                 ))
       end
@@ -752,7 +757,8 @@ describe 'policies' do
                       a_policy_with_statement(
                         Effect: 'Allow',
                         Action: 'iam:ChangePassword',
-                        Resource: "arn:aws:iam::#{@account_id}:user/#{user[:name]}"
+                        Resource:
+                          "arn:aws:iam::#{@account_id}:user/#{user[:name]}"
                       )
                     ))
       end
