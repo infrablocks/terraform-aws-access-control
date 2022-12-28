@@ -6,16 +6,17 @@ Terraform AWS Access Control
 A Terraform module for configuring AWS account access control.
 
 The access control deployment has no requirements.
- 
+
 The access control deployment consists of:
+
 * A set of users, each having
-  * a login profile (optional)
-  * an access key (optional)
-  * MFA enforced (optional)
+    * a login profile (optional)
+    * an access key (optional)
+    * MFA enforced (optional)
 * A set of group, each having
-  * a set of users, defined above or otherwise
-  * a set of attached policies
-  * a set of assumable roles
+    * a set of users, defined above or otherwise
+    * a set of attached policies
+    * a set of assumable roles
 
 Usage
 -----
@@ -25,28 +26,56 @@ configuration:
 
 ```hcl-terraform
 module "access_control" {
-  source = "infrablocks/access-control/aws"
-  version = "0.0.1"
+  source  = "infrablocks/access-control/aws"
+  version = "3.0.0"
+
+  users = [
+    {
+      name            = "user@example.com"
+      password_length = 32
+
+      public_gpg_key = filebase64("${path.root}/keys/user.gpg")
+
+      enforce_mfa           = "yes"
+      include_login_profile = "yes"
+      include_access_key    = "yes"
+
+      enabled = "yes"
+    }
+  ]
+
+  groups = [
+    {
+      name            = "admins"
+      users           = ["user@example.com"]
+      policies        = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+      assumable_roles = []
+    }
+  ]
 }
 ```
 
-See the 
-[Terraform registry entry](https://registry.terraform.io/modules/infrablocks/access-control/aws/latest) 
+See the
+[Terraform registry entry](https://registry.terraform.io/modules/infrablocks/access-control/aws/latest)
 for more details.
 
 ### Inputs
 
-| Name                  | Description                                      | Default | Required |
-|-----------------------|--------------------------------------------------|:-------:|:--------:|
+| Name   | Description                  | Default | Required |
+|--------|------------------------------|:-------:|:--------:|
+| users  | The list of users to manage  |    -    |   yes    |
+| groups | The list of groups to manage |    -    |   yes    |
 
 ### Outputs
 
-| Name | Description |
-|------|-------------|
+| Name   | Description                   |
+|--------|-------------------------------|
+| users  | Details of the managed users  |
+| groups | Details of the managed groups |
 
 ### Compatibility
 
-This module is compatible with Terraform versions greater than or equal to 
+This module is compatible with Terraform versions greater than or equal to
 Terraform 1.0.
 
 Development
@@ -54,7 +83,7 @@ Development
 
 ### Machine Requirements
 
-In order for the build to run correctly, a few tools will need to be installed 
+In order for the build to run correctly, a few tools will need to be installed
 on your development machine:
 
 * Ruby (3.1.1)
@@ -108,14 +137,13 @@ direnv allow <repository-directory>
 
 ### Running the build
 
-Running the build requires an AWS account and AWS credentials. You are free to 
+Running the build requires an AWS account and AWS credentials. You are free to
 configure credentials however you like as long as an access key ID and secret
-access key are available. These instructions utilise 
+access key are available. These instructions utilise
 [aws-vault](https://github.com/99designs/aws-vault) which makes credential
 management easy and secure.
 
-To provision module infrastructure, run tests and then destroy that 
-infrastructure, execute:
+To run the full build, including unit and integration tests, execute:
 
 ```bash
 aws-vault exec <profile> -- ./go
@@ -148,18 +176,17 @@ aws-vault exec <profile> -- ./go deployment:prerequisites:destroy[<deployment_id
 Configuration parameters can be overridden via environment variables:
 
 ```bash
-DEPLOYMENT_IDENTIFIER=testing aws-vault exec <profile> -- ./go
+SEED=testing aws-vault exec <profile> -- ./go
 ```
 
-When a deployment identifier is provided via an environment variable, 
-infrastructure will not be destroyed at the end of test execution. This can
-be useful during development to avoid lengthy provision and destroy cycles.
+When a seed is provided via an environment variable, infrastructure will not be 
+destroyed at the end of test execution. This can be useful during development 
+to avoid lengthy provision and destroy cycles.
 
-By default, providers will be downloaded for each terraform execution. To
-cache providers between calls:
+To subsequently destroy infrastructure for a given seed:
 
 ```bash
-TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache" aws-vault exec <profile> -- ./go
+FORCE_DESTROY=yes SEED=testing aws-vault exec <profile> -- ./go
 ```
 
 ### Common Tasks
@@ -175,6 +202,7 @@ ssh-keygen -m PEM -t rsa -b 4096 -C integration-test@example.com -N '' -f config
 #### Generating a self-signed certificate
 
 To generate a self signed certificate:
+
 ```
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
 ```
@@ -211,14 +239,14 @@ openssl aes-256-cbc \
 Contributing
 ------------
 
-Bug reports and pull requests are welcome on GitHub at 
-https://github.com/infrablocks/terraform-aws-access-control. 
-This project is intended to be a safe, welcoming space for collaboration, and 
-contributors are expected to adhere to 
+Bug reports and pull requests are welcome on GitHub at
+https://github.com/infrablocks/terraform-aws-access-control.
+This project is intended to be a safe, welcoming space for collaboration, and
+contributors are expected to adhere to
 the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 License
 -------
 
-The library is available as open source under the terms of the 
+The library is available as open source under the terms of the
 [MIT License](http://opensource.org/licenses/MIT).
