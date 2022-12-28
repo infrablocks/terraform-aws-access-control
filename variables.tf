@@ -1,4 +1,5 @@
 variable "users" {
+  description = "The list of users to manage."
   type = list(object({
     name = string,
     password_length = number,
@@ -14,6 +15,7 @@ variable "users" {
 }
 
 variable "groups" {
+  description = "The list of groups to manage."
   type = list(object({
     name = string
     users = list(string)

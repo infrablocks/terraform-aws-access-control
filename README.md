@@ -61,17 +61,17 @@ for more details.
 
 ### Inputs
 
-| Name   | Description                  | Default | Required |
-|--------|------------------------------|:-------:|:--------:|
-| users  | The list of users to manage  |    -    |   yes    |
-| groups | The list of groups to manage |    -    |   yes    |
+| Name   | Description                   | Default | Required |
+|--------|-------------------------------|:-------:|:--------:|
+| users  | The list of users to manage.  |    -    |   yes    |
+| groups | The list of groups to manage. |    -    |   yes    |
 
 ### Outputs
 
-| Name   | Description                   |
-|--------|-------------------------------|
-| users  | Details of the managed users  |
-| groups | Details of the managed groups |
+| Name   | Description                    |
+|--------|--------------------------------|
+| users  | Details of the managed users.  |
+| groups | Details of the managed groups. |
 
 ### Compatibility
 
@@ -86,7 +86,7 @@ Development
 In order for the build to run correctly, a few tools will need to be installed
 on your development machine:
 
-* Ruby (3.1.1)
+* Ruby (3.1)
 * Bundler
 * git
 * git-crypt
