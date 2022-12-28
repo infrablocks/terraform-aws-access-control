@@ -149,6 +149,18 @@ To run the full build, including unit and integration tests, execute:
 aws-vault exec <profile> -- ./go
 ```
 
+To run the unit tests, execute:
+
+```bash
+aws-vault exec <profile> -- ./go test:unit
+```
+
+To run the integration tests, execute:
+
+```bash
+aws-vault exec <profile> -- ./go test:integration
+```
+
 To provision the module prerequisites:
 
 ```bash
@@ -173,20 +185,21 @@ To destroy the module prerequisites:
 aws-vault exec <profile> -- ./go deployment:prerequisites:destroy[<deployment_identifier>]
 ```
 
-Configuration parameters can be overridden via environment variables:
+Configuration parameters can be overridden via environment variables. For 
+example, to run the unit tests with a seed of `"testing"`, execute:
 
 ```bash
-SEED=testing aws-vault exec <profile> -- ./go
+SEED=testing aws-vault exec <profile> -- ./go test:unit
 ```
 
 When a seed is provided via an environment variable, infrastructure will not be 
 destroyed at the end of test execution. This can be useful during development 
 to avoid lengthy provision and destroy cycles.
 
-To subsequently destroy infrastructure for a given seed:
+To subsequently destroy unit test infrastructure for a given seed:
 
 ```bash
-FORCE_DESTROY=yes SEED=testing aws-vault exec <profile> -- ./go
+FORCE_DESTROY=yes SEED=testing aws-vault exec <profile> -- ./go test:unit
 ```
 
 ### Common Tasks
