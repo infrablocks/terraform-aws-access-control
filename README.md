@@ -1,7 +1,7 @@
 Terraform AWS Access Control
 ============================
 
-[![CircleCI](https://circleci.com/gh/infrablocks/terraform-aws-account-defaults.svg?style=svg)](https://circleci.com/gh/infrablocks/terraform-aws-account-defaults)
+[![Version](https://img.shields.io/github/v/tag/infrablocks/terraform-aws-access-control?label=version)](https://github.com/infrablocks/terraform-aws-access-control/tags)
 
 A Terraform module for configuring AWS account access control.
 
