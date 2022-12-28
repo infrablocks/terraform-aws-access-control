@@ -8,7 +8,10 @@ describe 'basic' do
   end
 
   after(:context) do
-    destroy(role: :basic)
+    destroy(
+      role: :basic,
+      only_if: -> { !ENV['FORCE_DESTROY'].nil? || ENV['SEED'].nil? }
+    )
   end
 
   let(:defined_users) do
@@ -314,10 +317,10 @@ describe 'basic' do
         }
         expect(created_user)
           .not_to(be_allowed_action('iam:*AccessKey*')
-                .resource_arn(created_user.arn))
+                    .resource_arn(created_user.arn))
         expect(created_user)
           .not_to(be_allowed_action('iam:*SigningCertificate*')
-                .resource_arn(created_user.arn))
+                    .resource_arn(created_user.arn))
         expect(created_user)
           .to(be_allowed_action('iam:*AccessKey*')
                 .resource_arn(created_user.arn)
