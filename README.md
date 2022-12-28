@@ -63,17 +63,17 @@ for more details.
 
 ### Inputs
 
-| Name   | Description                   | Default | Required |
-|--------|-------------------------------|:-------:|:--------:|
-| users  | The list of users to manage.  |    -    |   yes    |
-| groups | The list of groups to manage. |    -    |   yes    |
+| Name     | Description                   | Default | Required |
+|----------|-------------------------------|:-------:|:--------:|
+| `users`  | The list of users to manage.  |    -    |   Yes    |
+| `groups` | The list of groups to manage. |    -    |   Yes    |
 
 ### Outputs
 
-| Name   | Description                    |
-|--------|--------------------------------|
-| users  | Details of the managed users.  |
-| groups | Details of the managed groups. |
+| Name     | Description                    |
+|----------|--------------------------------|
+| `users`  | Details of the managed users.  |
+| `groups` | Details of the managed groups. |
 
 ### Compatibility
 
