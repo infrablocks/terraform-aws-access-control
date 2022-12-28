@@ -26,7 +26,7 @@ Usage
 To use the module, include something like the following in your Terraform
 configuration:
 
-```hcl-terraform
+```terraform
 module "access_control" {
   source  = "infrablocks/access-control/aws"
   version = "3.0.0"
@@ -102,13 +102,13 @@ Installing the required tools is best managed by [homebrew](http://brew.sh).
 
 To install homebrew:
 
-```
+```shell
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
 Then, to install the required tools:
 
-```
+```shell
 # ruby
 brew install rbenv
 brew install ruby-build
@@ -147,50 +147,50 @@ management easy and secure.
 
 To run the full build, including unit and integration tests, execute:
 
-```bash
+```shell
 aws-vault exec <profile> -- ./go
 ```
 
 To run the unit tests, execute:
 
-```bash
+```shell
 aws-vault exec <profile> -- ./go test:unit
 ```
 
 To run the integration tests, execute:
 
-```bash
+```shell
 aws-vault exec <profile> -- ./go test:integration
 ```
 
 To provision the module prerequisites:
 
-```bash
+```shell
 aws-vault exec <profile> -- ./go deployment:prerequisites:provision[<deployment_identifier>]
 ```
 
 To provision the module contents:
 
-```bash
+```shell
 aws-vault exec <profile> -- ./go deployment:root:provision[<deployment_identifier>]
 ```
 
 To destroy the module contents:
 
-```bash
+```shell
 aws-vault exec <profile> -- ./go deployment:root:destroy[<deployment_identifier>]
 ```
 
 To destroy the module prerequisites:
 
-```bash
+```shell
 aws-vault exec <profile> -- ./go deployment:prerequisites:destroy[<deployment_identifier>]
 ```
 
 Configuration parameters can be overridden via environment variables. For 
 example, to run the unit tests with a seed of `"testing"`, execute:
 
-```bash
+```shell
 SEED=testing aws-vault exec <profile> -- ./go test:unit
 ```
 
@@ -200,7 +200,7 @@ to avoid lengthy provision and destroy cycles.
 
 To subsequently destroy unit test infrastructure for a given seed:
 
-```bash
+```shell
 FORCE_DESTROY=yes SEED=testing aws-vault exec <profile> -- ./go test:unit
 ```
 
@@ -232,7 +232,7 @@ openssl rsa -in key.pem -out ssl.key
 
 To encrypt a GPG key for use by CircleCI:
 
-```bash
+```shell
 openssl aes-256-cbc \
   -e \
   -md sha1 \
@@ -243,7 +243,7 @@ openssl aes-256-cbc \
 
 To check decryption is working correctly:
 
-```bash
+```shell
 openssl aes-256-cbc \
   -d \
   -md sha1 \
