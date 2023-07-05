@@ -166,7 +166,7 @@ describe 'policies' do
                     Effect: 'Allow',
                     Action: 'iam:*MFADevice',
                     Resource: %W[
-                      arn:aws:iam::#{@account_id}:mfa/test@example.com
+                      arn:aws:iam::#{@account_id}:mfa/*
                       arn:aws:iam::#{@account_id}:user/test@example.com
                     ]
                   )
@@ -278,7 +278,7 @@ describe 'policies' do
                     Effect: 'Allow',
                     Action: 'iam:*MFADevice',
                     Resource: %W[
-                      arn:aws:iam::#{@account_id}:mfa/test@example.com
+                      arn:aws:iam::#{@account_id}:mfa/*
                       arn:aws:iam::#{@account_id}:user/test@example.com
                     ]
                   )
@@ -352,7 +352,7 @@ describe 'policies' do
                       iam:ChangePassword
                     ],
                     NotResource: %W[
-                      arn:aws:iam::#{@account_id}:mfa/test@example.com
+                      arn:aws:iam::#{@account_id}:mfa/*
                       arn:aws:iam::#{@account_id}:user/test@example.com
                     ],
                     Condition: {
@@ -431,7 +431,7 @@ describe 'policies' do
                       iam:ChangePassword
                     ],
                     NotResource: %W[
-                      arn:aws:iam::#{@account_id}:mfa/test@example.com
+                      arn:aws:iam::#{@account_id}:mfa/*
                       arn:aws:iam::#{@account_id}:user/test@example.com
                     ],
                     Condition: {
@@ -510,7 +510,7 @@ describe 'policies' do
                           iam:ChangePassword
                         ],
                         NotResource: %W[
-                          arn:aws:iam::#{@account_id}:mfa/test@example.com
+                          arn:aws:iam::#{@account_id}:mfa/*
                           arn:aws:iam::#{@account_id}:user/test@example.com
                         ],
                         Condition: {
@@ -590,7 +590,7 @@ describe 'policies' do
                           iam:ChangePassword
                         ],
                         NotResource: %W[
-                          arn:aws:iam::#{@account_id}:mfa/test@example.com
+                          arn:aws:iam::#{@account_id}:mfa/*
                           arn:aws:iam::#{@account_id}:user/test@example.com
                         ],
                         Condition: {
@@ -829,7 +829,7 @@ describe 'policies' do
                     Effect: 'Allow',
                     Action: 'iam:*MFADevice',
                     Resource: %W[
-                      arn:aws:iam::#{@account_id}:mfa/#{user[:name]}
+                      arn:aws:iam::#{@account_id}:mfa/*
                       arn:aws:iam::#{@account_id}:user/#{user[:name]}
                     ]
                   )
@@ -852,7 +852,7 @@ describe 'policies' do
                         Effect: 'Allow',
                         Action: 'iam:*MFADevice',
                         Resource: %W[
-                          arn:aws:iam::#{@account_id}:mfa/#{user[:name]}
+                          arn:aws:iam::#{@account_id}:mfa/*
                           arn:aws:iam::#{@account_id}:user/#{user[:name]}
                         ]
                       )
@@ -950,7 +950,7 @@ describe 'policies' do
                       iam:ChangePassword
                     ],
                     NotResource: %W[
-                      arn:aws:iam::#{@account_id}:mfa/#{user[:name]}
+                      arn:aws:iam::#{@account_id}:mfa/*
                       arn:aws:iam::#{@account_id}:user/#{user[:name]}
                     ],
                     Condition: {
@@ -983,7 +983,7 @@ describe 'policies' do
                       iam:ChangePassword
                     ],
                     NotResource: %W[
-                      arn:aws:iam::#{@account_id}:mfa/#{user[:name]}
+                      arn:aws:iam::#{@account_id}:mfa/*
                       arn:aws:iam::#{@account_id}:user/#{user[:name]}
                     ],
                     Condition: {
