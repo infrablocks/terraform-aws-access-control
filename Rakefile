@@ -115,7 +115,7 @@ namespace :keys do
 
     namespace :passphrase do
       desc 'Generate GPG passphrase'
-      task :generate => ['directory:ensure'] do
+      task generate: ['directory:ensure'] do
         File.write('config/secrets/user/gpg.passphrase',
                    SecureRandom.base64(36))
       end
@@ -262,8 +262,8 @@ namespace :deployment do
     ) do |t, args|
       deployment_configuration =
         configuration
-          .for_scope(role: :prerequisites)
-          .for_overrides(args.to_h)
+        .for_scope(role: :prerequisites)
+        .for_overrides(args.to_h)
 
       t.source_directory = 'spec/unit/infra/prerequisites'
       t.work_directory = 'build/infra'
@@ -280,8 +280,8 @@ namespace :deployment do
     ) do |t, args|
       deployment_configuration =
         configuration
-          .for_scope(role: :root)
-          .for_overrides(args.to_h)
+        .for_scope(role: :root)
+        .for_overrides(args.to_h)
 
       t.source_directory = 'spec/unit/infra/root'
       t.work_directory = 'build/infra'
