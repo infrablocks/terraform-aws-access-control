@@ -106,9 +106,16 @@ namespace :keys do
   end
 
   namespace :user do
+    namespace :directory do
+      desc 'Ensure user GPG key directory exists.'
+      task :ensure do
+        FileUtils.mkdir_p('config/secrets/user')
+      end
+    end
+
     namespace :passphrase do
       desc 'Generate GPG passphrase'
-      task :generate do
+      task :generate => ['directory:ensure'] do
         File.write('config/secrets/user/gpg.passphrase',
                    SecureRandom.base64(36))
       end
@@ -121,7 +128,8 @@ namespace :keys do
         armor: false,
         owner_name: 'InfraBlocks Maintainers',
         owner_email: 'maintainers@infrablocks.io',
-        owner_comment: 'terraform-aws-access-control User Key'
+        owner_comment: 'terraform-aws-access-control User Key',
+        prerequisites: ['directory:ensure']
       ) do |t|
         t.passphrase =
           File.read('config/secrets/user/gpg.passphrase')
@@ -254,8 +262,8 @@ namespace :deployment do
     ) do |t, args|
       deployment_configuration =
         configuration
-        .for_scope(role: :prerequisites)
-        .for_overrides(args.to_h)
+          .for_scope(role: :prerequisites)
+          .for_overrides(args.to_h)
 
       t.source_directory = 'spec/unit/infra/prerequisites'
       t.work_directory = 'build/infra'
@@ -272,8 +280,8 @@ namespace :deployment do
     ) do |t, args|
       deployment_configuration =
         configuration
-        .for_scope(role: :root)
-        .for_overrides(args.to_h)
+          .for_scope(role: :root)
+          .for_overrides(args.to_h)
 
       t.source_directory = 'spec/unit/infra/root'
       t.work_directory = 'build/infra'
