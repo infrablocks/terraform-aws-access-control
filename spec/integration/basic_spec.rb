@@ -278,7 +278,7 @@ describe 'basic' do
 
         expect(created_user)
           .to(be_allowed_action('iam:*MFADevice')
-                .resource_arn("arn:aws:iam::#{account_id}:mfa/#{user_name}"))
+                .resource_arn("arn:aws:iam::#{account_id}:mfa/*"))
         expect(created_user)
           .to(be_allowed_action('iam:*MFADevice')
                 .resource_arn(created_user.arn))

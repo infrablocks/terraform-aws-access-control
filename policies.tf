@@ -66,7 +66,7 @@ data "aws_iam_policy_document" "manage_mfa" {
       "iam:*MFADevice"
     ]
     resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${each.key}",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/*",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${each.key}"
     ]
     sid = "AllowUserToManageTheirMFA"
@@ -144,7 +144,7 @@ data "aws_iam_policy_document" "enforce_mfa" {
       "iam:ChangePassword"
     ]
     not_resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/${each.key}",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:mfa/*",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${each.key}"
     ]
     sid = "DenyIAMAccessToOtherUsersUnlessMFAd"
