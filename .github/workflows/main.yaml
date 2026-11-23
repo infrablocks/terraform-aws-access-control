@@ -25,7 +25,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 60
     # Shared with pr.yaml's test job — one repo-wide AWS apply at a time
     concurrency:
